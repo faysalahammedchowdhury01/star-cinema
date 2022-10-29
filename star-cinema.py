@@ -8,25 +8,27 @@ Email: faysalahammedchowdhury01@gmail.com
 
 # star cinema class
 class Star_Cinema:
-    hall_list = []
+    __hall_list = []
 
+    # add a new hall when it's created
     def entry_hall(self, hall):
-        self.hall_list.append(hall)
+        self.__hall_list.append(hall)
 
 
 # hall class
 class Hall(Star_Cinema):
     def __init__(self, rows, cols, hall_no):
-        self.seats = {}
-        self.show_list = []
+        self.__seats = {}
+        self.__show_list = []
         self.rows = rows
         self.cols = cols
-        self.hall_no = hall_no
+        self.__hall_no = hall_no
         self.entry_hall(self)
 
     # seat name to index
     @staticmethod
     def seatname_to_index(seat):
+        seat = seat.upper().strip()
         row = seat[0]
         col = ""
         for i in range(1, len(seat)):
@@ -40,25 +42,25 @@ class Hall(Star_Cinema):
     def index_to_seat(i, j):
         return chr(i + 65) + str(j + 1)
 
-    # entry a new show method
+    # add a new show
     def entry_show(self, id, movie_name, time):
         show = (id, movie_name, time)
-        self.show_list.append(show)
-        self.seats[id] = []
+        self.__show_list.append(show)
+        self.__seats[id] = []
         seat_2d = []
         for i in range(self.rows):
             seat = []
             for j in range(self.cols):
                 seat.append(False)
             seat_2d.append(seat)
-        self.seats[id] = seat_2d
+        self.__seats[id] = seat_2d
 
     # book seats
     def book_seats(self, name, phone_number, id, seats):
         # making sure id is valid
-        if (id in self.seats) == False:
+        if (id in self.__seats) == False:
             print(f"\n\n{'*'*60}\n")
-            print("Invalid ID. Try Again!!!")
+            print("Invalid Show ID. Try Again!!!")
             return
 
         is_empty = True
@@ -66,10 +68,10 @@ class Hall(Star_Cinema):
             # making sure seat is valid
             if seat[0] >= self.rows or seat[1] >= self.cols:
                 print(f"\n\n{'*'*60}\n")
-                print("Invalid seat. Try Again!!")
+                print("Invalid seat. Try Again!!!")
                 return
 
-            if self.seats[id][seat[0]][seat[1]] == True:
+            if self.__seats[id][seat[0]][seat[1]] == True:
                 print(f"\n\n{'*'*60}\n")
                 print(f"{self.index_to_seat(seat[0],seat[1])} seat is already booked")
                 is_empty = False
@@ -77,23 +79,23 @@ class Hall(Star_Cinema):
 
         if is_empty:
             for seat in seats:
-                self.seats[id][seat[0]][seat[1]] = True
+                self.__seats[id][seat[0]][seat[1]] = True
 
             print("\n\n##### TICKET BOOKED SUCCESSFULLY #####")
             print(f"{'*'*60}\n")
             print(f"NAME: {name}")
             print(f"PHONE NUMBER: {phone_number}")
             print(
-                f"\nMOVIE NAME:  {[movie for movie in self.show_list if id == movie[0]][0][1]}",
+                f"\nMOVIE NAME:  {[movie for movie in self.__show_list if id == movie[0]][0][1]}",
                 end="\t\t",
             )
             print(
-                f"MOVIE TIME:  {[movie for movie in self.show_list if id == movie[0]][0][2]}",
+                f"MOVIE TIME:  {[movie for movie in self.__show_list if id == movie[0]][0][2]}",
             )
             print("TICKETS: ", end="")
             for seat in seats:
-                print(f"{self.index_to_seat(seat[0],seat[1])} ")
-            print(f"HALL: {self.hall_no}")
+                print(f"{self.index_to_seat(seat[0],seat[1])} ", end=" ")
+            print(f"\nHALL: {self.__hall_no}")
 
         print(f"\n{'*'*60}\n\n")
 
@@ -101,11 +103,11 @@ class Hall(Star_Cinema):
     def view_show_list(self):
         print(f"\n\n{'*'*60}\n")
         # show message if no show available
-        if len(self.show_list) == 0:
-            print("No show available!!!")
+        if len(self.__show_list) == 0:
+            print("No shows available at the moment!!!")
             return
 
-        for movie in self.show_list:
+        for movie in self.__show_list:
             print(f"MOVIE NAME: {movie[1]}\tID: {movie[0]}\t TIME: {movie[2]}")
 
         print(f"\n{'*'*60}\n\n")
@@ -113,13 +115,13 @@ class Hall(Star_Cinema):
     # will show all available seats
     def view_available_seats(self, id):
         # making sure id is valid
-        if (id in self.seats) == False:
+        if (id in self.__seats) == False:
             print(f"\n\n{'*'*70}\n")
             print("Invalid ID. Try Again!!!")
             print(f"\n{'*'*70}\n\n")
             return
 
-        for show in self.show_list:
+        for show in self.__show_list:
             if show[0] == id:
                 print(f"\n\nMOVIE NAME: {show[1]}\t\tTime: {show[2]}")
                 break
@@ -127,7 +129,7 @@ class Hall(Star_Cinema):
         print('"X" for already booked seats\n')
         print(f"\n{'*'*70}\n")
 
-        for i, row in enumerate(self.seats[id]):
+        for i, row in enumerate(self.__seats[id]):
             for j, col in enumerate(row):
                 if col == True:
                     print("X", end="\t\t")
@@ -138,10 +140,11 @@ class Hall(Star_Cinema):
         print(f"\n{'*'*70}\n\n")
 
 
-sony = Hall(2, 5, 1)
+sony = Hall(20, 10, 1)
 sony.entry_show("12", "Poramon", "26 oct 2022, 12:00 AM")
 sony.entry_show("13", "Hawa", "27 oct 2022, 12:00 AM")
 sony.entry_show("14", "Dohon", "27 oct 2022, 06:00 PM")
+
 
 while True:
     print("1. VIEW ALL SHOWS OF TODAY")
